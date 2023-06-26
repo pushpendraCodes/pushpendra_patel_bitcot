@@ -1,0 +1,76 @@
+
+life cycle methode in react----
+  stages -
+
+  - mounting
+       constructor- render -  componentDidMount - load
+  - update
+
+         componentDidUpdate -update
+  - unmount
+         componentwillUnmount - expire
+
+
+
+componentDidMount =>
+when html get ready then we use componentDidMount
+for api calling we use
+
+componentDidUpdate =>
+  when new state and props get changed it works
+  change state in codition otherwise it will go in infinite loop
+
+
+    shouldComponentUpdate -
+     we cancall  conditional api here
+
+
+     componentwillUnmount =>
+       when component get removed then it call
+
+
+
+functional component => to use lifecycle methode we use hooks in functional component
+Hooks-------
+
+-in function component to use lifecycle methode we use hooks
+ in react
+ - it is introduced in react version 16
+
+
+usememo =>
+-it enhance the application performance
+- whenever state  change the component get re-renders and some function unwantedly calling  so to eliminate this we us usememo.
+
+
+useeefect Vs usememo
+
+by useefct we can perform all lifecycle  methode like when component get load , update update and remove
+
+-useeefect is use to stop whole component to get re-render
+-usememo is used to stop rendering the specific part of component
+
+
+useRef hook => useRef use to handle all DOM manipulation. when we need to update direct to html
+
+usememo vs usecallback
+
+useCallback() and useMemo() are pretty much same but useCallback saves the function reference in the memory and checks on the second render whether it's same or not if it is same then it returns last saved function without recreating it and if it is changed then it returns a new function and replaces it with older function in memory for future rendering. useMemo works in same manner but it can't save your function but the computed or returned value. On every render useMemo checks the value if the returned value of your function is the same on second render then it will return same value without recalculating the function value and if the value is not same on second render then it will call the function and return new value and store it for future render.
+
+usecontext vs redux
+
+-For simpler applications with basic state management needs, useContext may be a good option to consider. On the other hand, for more complex applications with multiple data sources and complex state updates, Redux may provide a more efficient and scalable solution
+
+-useContext is a hook.   -Redux is a state management library.
+-It is used to share data. - It is used to share data.
+-It is better to use with small applications.  -It is perfect for larger applications.
+
+
+
+
+
+
+
+
+
+
