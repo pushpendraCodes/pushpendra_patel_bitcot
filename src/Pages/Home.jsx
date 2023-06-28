@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import data from "../data";
 import { BiSolidEdit } from "react-icons/bi";
 import { AiFillDelete } from "react-icons/ai";
+
 import { GrView } from "react-icons/gr";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -12,6 +13,7 @@ import Box from "@mui/material/Box";
 
 import Typography from "@mui/material/Typography";
 import Modal1 from "@mui/material/Modal";
+import EditUser from "./EditUser";
 
 const Home = () => {
   const [userdata, setdata] = useState([
@@ -30,9 +32,7 @@ const Home = () => {
   ]);
   console.log(userdata, "userdata");
   const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [show1, setShow1] = useState(false);
 
   const [users, setusers] = useState({
     id: userdata.length + 1,
@@ -40,7 +40,25 @@ const Home = () => {
     email: "",
     mobile: "",
   });
+
+  const handleClose2 = () => {
+    setShow1(false);
+    setusers({ users: {} });
+  };
+  const handleShow1 = () => {
+    setShow1(true);
+  };
+  const handleClose = () => {
+    setShow(false);
+    setusers({ users: {} });
+  };
+  const handleShow = () => {
+    setShow(true);
+  };
+
   console.log(userdata, "user");
+
+  // onchange function
   const onchangeinputenput = (e) => {
     setusers({ ...users, [e.target.name]: e.target.value });
   };
@@ -48,59 +66,46 @@ const Home = () => {
 
   const [id, setId] = useState(null);
 
+  //   add user
+
   const addUser = (e) => {
     e.preventDefault();
     console.log(id, "id");
 
-      console.log(users, "users");
-      setdata([...userdata, users]);
-      setusers({});
-      handleClose();
-
-  };
-
-
-  const Update = (e)=>{
-e.preventDefault()
-if(name &&email&&mobile){
-    let newState = userdata.map(obj => {
-
-
-    console.log(id)
-    if (obj.id === id) {
-      return {...obj,
-        id :id,
-        name: name,
-        email:email,
-        mobile:mobile
-    };
-    }
-
-    // 👇️ otherwise return the object as is
-    return obj;
-  });
-
-    setdata(newState);
+    console.log(users, "users");
+    setdata([...userdata, users]);
     setusers({});
     handleClose();
-}else{
-    alert("all field required")
-}
+  };
 
-  }
-  console.log(users);
+  //   update function
+  const Update = (e) => {
+    e.preventDefault();
+    if (name && email && mobile) {
+      let newState = userdata.map((obj) => {
+        console.log(id);
+        if (obj.id === id) {
+          return { ...obj, id: id, name: name, email: email, mobile: mobile };
+        }
+        return obj;
+      });
+      setdata(newState);
+      setusers({});
+      handleClose2();
+      setId("");
+    } else {
+      alert("all field required");
+    }
+  };
 
-
-
+  //  open edit modal function
 
   const handelEdit = (id) => {
-
     let objIndex = userdata.findIndex((obj) => obj.id == id);
     setId(id);
     console.log(id);
-
     setusers(userdata[objIndex]);
-    handleShow();
+    handleShow1();
 
     console.log(users, "users");
   };
@@ -111,7 +116,6 @@ if(name &&email&&mobile){
   };
 
   //   view user section
-
   const style = {
     position: "absolute",
     top: "50%",
@@ -139,100 +143,126 @@ if(name &&email&&mobile){
   };
 
   // search user
-  const [text, setText] = useState(" ");
+  const [text, setText] = useState("");
+  useEffect(() => {
+    const searchUser = () => {
+      let map = userdata.filter((person) => {
+        return (
+          person.name.toLowerCase().includes(text.toLowerCase()) ||
+          person.email.toLowerCase().includes(text.toLowerCase()) ||
+          person.mobile.toLowerCase().includes(text.toLowerCase())
+        );
+      });
 
-  const searchUser = () => {
+      if (text) {
+        setdata(map);
+      } else {
+        setdata([
+          {
+            id: 1,
+            name: "Aaron",
+            mobile: "5785664545",
+            email: "aaron@gmail.com",
+          },
+          {
+            id: 2,
+            name: "Buincy Hanson",
+            mobile: "5785664545",
+            email: "hanson@gmail.com",
+          },
+        ]);
+      }
+    };
 
-    if(text){
-        let user = userdata.filter((item) => {
-            return (
-              item.name.toLowerCase().includes(text.toLowerCase()) ||
-              item.email.toLowerCase().includes(text.toLowerCase()) ||
-              item.mobile.toLowerCase().includes(text.toLowerCase())
-            );
-          });
-          setdata(user)
-    }else{
-        location.reload()
-    }
-
-
-};
-
-//   useEffect(() => {
-
-
-//     searchUser();
-//   }, [text]);
+    searchUser();
+  }, [text]);
 
   return (
     <>
+      <EditUser
+        Update={Update}
+        name={name}
+        email={email}
+        mobile={mobile}
+        show1={show1}
+        onchangeinputenput={onchangeinputenput}
+        handleClose={handleClose2}
+        handleShow={handleShow1}
+      />
       <div className="container my-5">
-        <h3 className="text-center my-5">Crud Application</h3>
+        <h3 className="text-center my-5">User Application</h3>
         <div className="mx-auto text-center">
           <Button variant="primary" onClick={handleShow}>
-            Add user
+            Add Contacts
           </Button>
 
           <input
-          placeholder="search user"
-          className="mx-3"
+            placeholder="search user"
+            className="mx-3"
             onChange={(e) => {
               setText(e.target.value);
             }}
             type="text"
+            value={text}
           />
-          <button  onClick={searchUser}>search</button>
         </div>
 
-        <table class="table">
+        <table class="table my-5">
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+              <th scope="col">Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">contact</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
-            {userdata.length > 0 ?
-              userdata.map((item, i) => {
-                return (
-                  <tr key={i}>
-                    <th scope="row">{i + 1}</th>
-                    <td>{item.name}</td>
-                    <td>{item.email}</td>
-                    <td>{item.mobile}</td>
-                    <td>
-                      <BiSolidEdit
-                        onClick={() => {
-                          handelEdit(item.id);
-                        }}
-                        size={20}
-                        className="mr-3"
-                      />{" "}
-                      <AiFillDelete
-                        onClick={() => {
-                          HandelDelete(item.id);
-                        }}
-                        size={20}
-                        className="mr-3"
-                      />
-                      &nbsp;{" "}
-                      <GrView
-                        onClick={() => {
-                          HandelView(item.id);
-                        }}
-                        size={20}
-                        className="mr-3"
-                      />
-                      &nbsp;{" "}
-                    </td>
-                  </tr>
-                );
-              })
-              :"no data found"
-              }
+            {userdata.length > 0
+              ? userdata.map((item, i) => {
+                  return (
+                    <tr key={i}>
+                      <th scope="row">{i + 1}</th>
+                      <td>{item.name}</td>
+                      <td>{item.email}</td>
+                      <td>{item.mobile}</td>
+                      <td>
+                        <BiSolidEdit
+                          onClick={() => {
+                            handelEdit(item.id);
+                          }}
+                          style={{ cursor: "pointer" }}
+                          title="edit user"
+                          size={20}
+                          className="mr-3"
+                          color="blue"
+                        />{" "}
+                        <AiFillDelete
+                          style={{ cursor: "pointer" }}
+                          title="delete user"
+                          onClick={() => {
+                            HandelDelete(item.id);
+                          }}
+                          size={20}
+                          color="red"
+                          className="mr-3"
+                        />
+                        &nbsp;{" "}
+                        <GrView
+                          style={{ cursor: "pointer" }}
+                          title="view user"
+                          onClick={() => {
+                            HandelView(item.id);
+                          }}
+                          size={20}
+                          className="mr-3"
+                        />
+                        &nbsp;{" "}
+                      </td>
+                    </tr>
+                  );
+                })
+              : "no data found"}
           </tbody>
         </table>
       </div>
@@ -241,11 +271,11 @@ if(name &&email&&mobile){
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Contact</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <form>
+          <form onSubmit={addUser}>
             <div class="mb-3">
               <label for="exampleInputEmail1" class="form-label">
                 Name
@@ -296,27 +326,9 @@ if(name &&email&&mobile){
 
             <br />
             <br />
-            {id ? (
-              <button
-                onClick={(e) => {
-                  Update(e);
-                }}
-                type="submit"
-                class="btn btn-primary"
-              >
-                update user
-              </button>
-            ) : (
-              <button
-                onClick={(e) => {
-                  addUser(e);
-                }}
-                type="submit"
-                class="btn btn-primary"
-              >
-                Submit
-              </button>
-            )}
+            <button type="submit" class="btn btn-primary">
+              Submit
+            </button>
           </form>
         </Modal.Body>
         <Modal.Footer>
